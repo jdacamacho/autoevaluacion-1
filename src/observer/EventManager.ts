@@ -10,7 +10,7 @@ export class EventManager{
     }
 
     suscribe (user: EventListener) {
-        this.suscribers.push(user);
+        // this.suscribers.push(user);
     }
 
     unsuscribe(userId: string){
@@ -18,8 +18,8 @@ export class EventManager{
     }
 
     notify(){
-        this.suscribers.forEach( (s) => {
-            s.update();
-        });
+        // this.suscribers.forEach( (s) => {
+        //     s.update();
+        // });
     }
 }
