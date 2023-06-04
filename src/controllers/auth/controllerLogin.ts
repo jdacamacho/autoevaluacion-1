@@ -16,8 +16,6 @@ export const login = async(req, res)=>{
     try{
         connection.query('SELECT * FROM user WHERE username = ?',[username], 
             async(err, result)=>{
-                console.log("RESULTADO\n" + result)
-                console.log("\nERR\n" + result)
                 if(result && !comparePassword(passwordHash, result[0].password) ){
                     
                     req.session.loggedin = true;
