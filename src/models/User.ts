@@ -10,3 +10,8 @@ export type User = {
     username: string;
     password: string;
 }
+
+export type tokeInfo = {
+    _id: string | number;
+    roles: string | userRol[];
+}

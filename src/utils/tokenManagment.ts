@@ -1,9 +1,9 @@
-import { User } from "../models/User";
+import { User, tokeInfo } from "../models/User";
 import jwt from "jsonwebtoken"
 
 export const tokenSign = async(user: User) => {
 
-    const payload = {
+    const payload: tokeInfo = {
         _id: user.id,
         roles: user.roles
     };
