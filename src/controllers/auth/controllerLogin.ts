@@ -14,7 +14,7 @@ export const login = async (req, res) => {
         const passwordHash = await encryptPassword(password);
 
         const queryResult = await new Promise<any[]>((resolve, reject) => {
-            connection.query('SELECT * FROM user WHERE email = ?', [email], (err, result) => {
+            connection.query('SELECT * FROM user WHERE user_email = ?', [email], (err, result) => {
                 if (err) {
                     reject(err);
                 } else {
