@@ -1,40 +1,49 @@
 import bcryptjs from 'bcryptjs';
-import {connection} from '../../database/db';
-import { tokenSign } from '../../utils/tokenManagment';
+import { connection } from '../../database/db';
 import { comparePassword, encryptPassword } from '../../utils/passwordHandler';
+import { tokenSign } from '../../utils/tokenManagment';
 
-export const showLogin = (req, res)=>{
+export const showLogin = (req, res) => {
     res.render('login');
-} 
+}
 
-export const login = async(req, res)=>{
-    console.log(req);
-    const username = req.body.username;
-    const password = req.body.password;
-    let passwordHash = await encryptPassword(password);
+export const login = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        const passwordHash = await encryptPassword(password);
 
-    try{
-        connection.query('SELECT * FROM user WHERE username = ?',[username], 
-            async(err, result)=>{
-                if(result && !comparePassword(passwordHash, result[0].password) ){
-                    
-                    req.session.loggedin = true;
-                    req.session.username = result[0].username;
-                    return res.json({
-                            data: result,
-                            status: "SUCCESS"
-                    })
+        const queryResult = await new Promise<any[]>((resolve, reject) => {
+            connection.query('SELECT * FROM user WHERE email = ?', [email], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
                 }
-                return res.json({
-                    data: err || result,
-                    status: "ERROR"
-                })
-        })
+            });
+        });
 
-    }catch(err){
+
+        if (queryResult.length > 0 && comparePassword(passwordHash, queryResult[0].password)) {
+            const token = await tokenSign(queryResult[0])
+            req.session.loggedin = true;
+            req.session.email = queryResult[0].email;
+
+            return res.json({
+                data: queryResult,
+                status: "SUCCESS"
+            });
+        } 
+
+        return res.json({
+            data: queryResult,
+            status: "ERROR"
+        });
+        
+    } catch (err) {
         return res.json({
             data: err,
             status: "ERROR"
-        })
+        });
     }
-}
+};
